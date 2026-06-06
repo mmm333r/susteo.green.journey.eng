@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cost Estimation Simulator | SUSTEO Green Journey</title>
+  <meta name="description" content="Calculate your company's potential CO₂ reduction and cost impact from switching to SUSTEO biofuel. Free, no registration required.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<!-- ===== HEADER ===== -->
+<header id="header">
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <div class="logo-icon">🌿</div>
+      SUSTEO <span>Green Journey</span>
+    </a>
+    <nav id="nav">
+      <a href="market.html">Market &amp; Environment</a>
+      <a href="products.html">Products</a>
+      <a href="supply.html">Supply Network</a>
+      <a href="quality.html">Quality Data</a>
+      <a href="cases.html">Case Studies</a>
+      <a href="future.html">Promise for the Future</a>
+      <a href="faq.html">FAQ</a>
+      <a href="simulation.html" class="nav-cta active">Cost Simulator</a>
+    </nav>
+    <div class="hamburger" id="hamburger" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</header>
+
+<!-- ===== PAGE HERO ===== -->
+<div class="page-hero">
+  <div class="container">
+    <div class="page-hero-label">Cost Estimation Simulator</div>
+    <h1>🧮 Cost Estimation Simulator</h1>
+    <p>Calculate your potential CO₂ reduction and estimated cost from switching to SUSTEO. Free to use — no registration required.</p>
+  </div>
+</div>
+
+<!-- ===== BREADCRUMB ===== -->
+<div class="breadcrumb">
+  <div class="breadcrumb-inner">
+    <a href="index.html">TOP</a>
+    <span>›</span>
+    <span>Cost Estimation Simulator</span>
+  </div>
+</div>
+
+<!-- ===== SIMULATOR ===== -->
+<section class="section">
+  <div class="container">
+    <div class="grid-2" style="gap:48px; align-items:start;">
+
+      <!-- FORM -->
+      <div class="sim-form">
+        <h3>
+          <span style="display:inline-flex; align-items:center; justify-content:center; width:36px; height:36px; background:var(--main); color:white; border-radius:50%; font-size:1rem; font-weight:900; flex-shrink:0;">1</span>
+          Enter Your Information
+        </h3>
+
+        <div class="form-group">
+          <label class="form-label">Step 1: Select Fuel Type</label>
+          <select class="form-select" id="fuelType" onchange="updateSimulator()">
+            <option value="">-- Please select --</option>
+            <option value="susteo100">SUSTEO (HVO 100%) — Up to 90% CO₂ reduction</option>
+            <option value="susteo51">SUSTEO 51 (Blended) — Approx. 45% CO₂ reduction</option>
+            <option value="bioheavy">Bio-Heavy Oil — Approx. 80% CO₂ reduction</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Step 2: Main Application</label>
+          <select class="form-select" id="useCase" onchange="updateSimulator()">
+            <option value="">-- Please select --</option>
+            <option value="truck">Trucks / Logistics fleet</option>
+            <option value="bus">Buses</option>
+            <option value="construction">Construction equipment</option>
+            <option value="generator">Power generators</option>
+            <option value="ship">Marine vessels</option>
+            <option value="industrial">Industrial boilers / Furnaces</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Step 3: Monthly Fuel Usage (liters)</label>
+          <input type="number" class="form-input" id="monthlyLiters" placeholder="e.g. 10000" min="0" oninput="updateSimulator()">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Step 4: Number of Units (vehicles / machines)</label>
+          <input type="number" class="form-input" id="numUnits" placeholder="e.g. 10" min="1" value="1" oninput="updateSimulator()">
+        </div>
+
+        <button class="btn btn-primary" style="width:100%; justify-content:center; margin-top:8px;" onclick="runSimulation()">
+          🧮 Calculate Now
+        </button>
+
+        <p style="text-align:center; font-size:0.8rem; color:var(--gray-dark); margin-top:16px;">
+          This simulation provides an estimate only. For an accurate quote, please contact us.
+        </p>
+      </div>
+
+      <!-- RESULTS -->
+      <div>
+        <div id="simPlaceholder" style="text-align:center; padding:80px 40px; background:var(--gray-light); border-radius:var(--radius); color:var(--gray-dark);">
+          <div style="font-size:4rem; margin-bottom:16px;">🧮</div>
+          <h3 style="color:var(--gray-dark); font-size:1.2rem;">Fill in the form and click "Calculate Now"</h3>
+          <p style="font-size:0.9rem; margin-top:8px;">Your CO₂ reduction estimate and cost information will appear here.</p>
+        </div>
+
+        <div id="simResults" style="display:none;">
+          <div class="sim-result">
+            <h3>📊 Your Estimated Results</h3>
+            <div class="sim-metrics">
+              <div class="sim-metric-card">
+                <div class="sim-metric-value" id="monthlyReduction">—</div>
+                <div class="sim-metric-label">Monthly GHG Reduction (tons CO₂e)</div>
+              </div>
+              <div class="sim-metric-card">
+                <div class="sim-metric-value" id="annualReduction">—</div>
+                <div class="sim-metric-label">Annual GHG Reduction (tons CO₂e)</div>
+              </div>
+              <div class="sim-metric-card">
+                <div class="sim-metric-value" id="monthlyCost">—</div>
+                <div class="sim-metric-label">Monthly Reference Cost<br>(vs. conventional diesel)</div>
+              </div>
+              <div class="sim-metric-card">
+                <div class="sim-metric-value" id="treesEquiv">—</div>
+                <div class="sim-metric-label">Annual equivalent cedar trees<br>(CO₂ absorption)</div>
+              </div>
+            </div>
+          </div>
+
+          <div id="simMessage" style="margin-top:24px; padding:20px 24px; background:var(--main-light); border-radius:var(--radius-sm); border-left:4px solid var(--main); font-size:0.95rem; line-height:1.8; color:var(--dark);">
+          </div>
+
+          <div style="margin-top:24px; display:flex; gap:12px; flex-wrap:wrap;">
+            <a href="mailto:contact@euglena.jp" class="btn btn-primary" style="flex:1; justify-content:center;">✉️ Request Detailed Quote</a>
+            <button class="btn btn-outline" style="flex:1; justify-content:center;" onclick="resetSimulation()">🔄 Reset</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="text-center" style="margin-bottom:48px;">
+      <span class="section-label">How It Works</span>
+      <h2 class="section-title">How We Calculate the Estimate</h2>
+    </div>
+
+    <div class="grid-3">
+      <div class="card" style="text-align:center;">
+        <div style="width:48px; height:48px; background:var(--main); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:1.2rem; margin:0 auto 16px;">1</div>
+        <h4>CO₂ Reduction Calculation</h4>
+        <p style="font-size:0.9rem; color:var(--gray-dark);">Based on ISCC-certified lifecycle GHG savings factors: SUSTEO 100% = 90% reduction, SUSTEO 51 = 45%, Bio-Heavy Oil = 80%. Applied to your fuel consumption volume.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="width:48px; height:48px; background:var(--main); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:1.2rem; margin:0 auto 16px;">2</div>
+        <h4>Cost Estimate</h4>
+        <p style="font-size:0.9rem; color:var(--gray-dark);">Reference pricing based on current market conditions. Actual pricing varies by volume, location, and contract terms. Contact us for an accurate quote.</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="width:48px; height:48px; background:var(--main); border-radius:50%; display:flex; align-items:center; justify-content:center; color:white; font-weight:900; font-size:1.2rem; margin:0 auto 16px;">3</div>
+        <h4>Cedar Tree Equivalent</h4>
+        <p style="font-size:0.9rem; color:var(--gray-dark);">The annual CO₂ reduction is expressed in terms of equivalent cedar trees (sugi) — one cedar tree absorbs approximately 14 kg of CO₂ per year. A helpful way to visualize your impact.</p>
+      </div>
+    </div>
+
+    <div class="note-box" style="margin-top:32px;">
+      <strong>Note:</strong> All calculations are estimates based on ISCC-certified GHG savings factors and reference pricing. Actual CO₂ reduction and costs will vary based on specific feedstock, supply chain, volume discounts, and market conditions. For official sustainability reporting, use the certified values provided with your actual SUSTEO delivery documentation.
+    </div>
+  </div>
+</section>
+
+<!-- ===== NEXT STEPS ===== -->
+<section class="section section-dark">
+  <div class="container text-center">
+    <h2 style="color:white; margin-bottom:16px;">Ready to make the switch?</h2>
+    <p style="color:rgba(255,255,255,0.7); margin-bottom:40px;">Once you have your estimate, our team can help with detailed pricing, supply arrangements, and documentation for sustainability reporting.</p>
+    <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+      <a href="mailto:contact@euglena.jp" class="btn btn-white">✉️ Contact Us for a Quote</a>
+      <a href="faq.html" class="btn btn-outline" style="border-color:rgba(255,255,255,0.4); color:white;">💬 View FAQ →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo" style="margin-bottom:16px;">
+          <div class="logo-icon">🌿</div>
+          SUSTEO <span style="color:var(--main);">Green Journey</span>
+        </div>
+        <p>SUSTEO, the next-generation biofuel by Euglena Co., Ltd. Supporting corporate and municipal decarbonization through the simple act of switching fuels.</p>
+        <div class="sns-links">
+          <a href="#" class="sns-link">𝕏</a>
+          <a href="#" class="sns-link">in</a>
+          <a href="#" class="sns-link">▶</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Site Map</h4>
+        <ul>
+          <li><a href="market.html">Market &amp; Environment</a></li>
+          <li><a href="products.html">Products</a></li>
+          <li><a href="supply.html">Supply Network</a></li>
+          <li><a href="quality.html">Quality Data</a></li>
+          <li><a href="cases.html">Case Studies</a></li>
+          <li><a href="future.html">Promise for the Future</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Support</h4>
+        <ul>
+          <li><a href="faq.html">FAQ</a></li>
+          <li><a href="simulation.html">Cost Simulator</a></li>
+          <li><a href="mailto:contact@euglena.jp">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="https://www.euglena.jp" target="_blank">Euglena Co., Ltd.</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Use</a></li>
+          <li><a href="#">Site Map</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2025 Euglena Co., Ltd. All Rights Reserved.</div>
+      <div class="footer-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Use</a>
+        <a href="#">Contact Us</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<a href="mailto:contact@euglena.jp" class="floating-cta">✉️ Contact Us</a>
+
+<script>
+  function toggleNav() {
+    document.getElementById('nav').classList.toggle('open');
+  }
+  window.addEventListener('scroll', () => {
+    const header = document.getElementById('header');
+    if (window.scrollY > 50) {
+      header.style.boxShadow = '0 4px 24px rgba(0,0,0,0.08)';
+    } else {
+      header.style.boxShadow = 'none';
+    }
+  });
+
+  function updateSimulator() {
+    // Live update as user types (optional preview)
+  }
+
+  function runSimulation() {
+    const fuelType = document.getElementById('fuelType').value;
+    const useCase = document.getElementById('useCase').value;
+    const monthlyLiters = parseFloat(document.getElementById('monthlyLiters').value) || 0;
+    const numUnits = parseInt(document.getElementById('numUnits').value) || 1;
+
+    if (!fuelType || !monthlyLiters) {
+      alert('Please select a fuel type and enter your monthly fuel usage to calculate.');
+      return;
+    }
+
+    // CO2 reduction factors (kg CO2 per liter of diesel = 2.58 kg)
+    const co2PerLiter = 2.58; // kg CO2 per liter conventional diesel
+
+    let reductionRate;
+    let costPremiumPerLiter; // JPY per liter above diesel price
+
+    switch(fuelType) {
+      case 'susteo100':
+        reductionRate = 0.90;
+        costPremiumPerLiter = 40;
+        break;
+      case 'susteo51':
+        reductionRate = 0.45;
+        costPremiumPerLiter = 20;
+        break;
+      case 'bioheavy':
+        reductionRate = 0.80;
+        costPremiumPerLiter = 35;
+        break;
+      default:
+        reductionRate = 0.90;
+        costPremiumPerLiter = 40;
+    }
+
+    const totalMonthlyLiters = monthlyLiters * numUnits;
+    const monthlyReductionKg = totalMonthlyLiters * co2PerLiter * reductionRate;
+    const monthlyReductionTons = monthlyReductionKg / 1000;
+    const annualReductionTons = monthlyReductionTons * 12;
+    const monthlyCostPremium = totalMonthlyLiters * costPremiumPerLiter;
+
+    // Cedar tree equivalent: 1 cedar tree absorbs ~14 kg CO2/year
+    const equivalentTrees = Math.round((annualReductionTons * 1000) / 14);
+
+    // Display results
+    document.getElementById('monthlyReduction').textContent = monthlyReductionTons.toFixed(1) + ' t';
+    document.getElementById('annualReduction').textContent = annualReductionTons.toFixed(1) + ' t';
+    document.getElementById('monthlyCost').textContent = '+¥' + monthlyCostPremium.toLocaleString();
+    document.getElementById('treesEquiv').textContent = equivalentTrees.toLocaleString();
+
+    const annualTons = annualReductionTons.toFixed(1);
+    document.getElementById('simMessage').innerHTML = `✅ An estimated <strong>${annualTons} tons</strong> of CO₂ reduction per year. This is equivalent to the annual CO₂ absorption of <strong>${equivalentTrees.toLocaleString()} cedar trees</strong>.<br><br>For an accurate quote, our representative will follow up with detailed questions.`;
+
+    document.getElementById('simPlaceholder').style.display = 'none';
+    document.getElementById('simResults').style.display = 'block';
+
+    // Scroll to results on mobile
+    if (window.innerWidth <= 768) {
+      document.getElementById('simResults').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function resetSimulation() {
+    document.getElementById('fuelType').value = '';
+    document.getElementById('useCase').value = '';
+    document.getElementById('monthlyLiters').value = '';
+    document.getElementById('numUnits').value = '1';
+    document.getElementById('simResults').style.display = 'none';
+    document.getElementById('simPlaceholder').style.display = 'block';
+  }
+</script>
+</body>
+</html>
